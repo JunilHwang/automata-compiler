@@ -2,7 +2,7 @@
   "name": "automata-compiler",
   "version": "1.0.0",
   "description": "",
-  "main": "Scanner.js",
+  "main": "index.js",
   "dependencies": {
     "@types/node": "^12.12.7",
     "ts-node": "^8.5.0"
@@ -12,7 +12,8 @@
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "nodemon --exec ts-node Scanner.ts"
+    "start": "nodemon --exec ts-node index.ts",
+    "compute": "nodemon --exec ts-node Computer.ts"
   },
   "keywords": [],
   "author": "",
