@@ -12,13 +12,13 @@ class CodeContainer {
     this.setCode(code);
   }
   public setCode(code: string) {
-    this.code = code;
+    this.code = code.trim();
   }
   public getCode() {
-    return this.code;
+    return this.code.trim();
   }
   public getFirst() {
-    return this.code[0];
+    return this.getCode()[0];
   }
 }
 CodeContainer.init();

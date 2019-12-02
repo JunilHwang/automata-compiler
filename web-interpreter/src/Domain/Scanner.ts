@@ -1,10 +1,11 @@
 import { Token, opTable, IntNum, VarName } from './TokenDefined';
 import { codeContainer } from './CodeContainer';
-import { isNum, isVar } from '@/Helper';
+import { isNumChar, isNumStr, isVar } from '@/Helper';
 
 export const nextToken = (): Token => {
   const code = codeContainer.getCode();
   const first = codeContainer.getFirst();
+  const last = code.length;
   let token: Token;
   let i = 0;
   switch (true) {
@@ -12,16 +13,17 @@ export const nextToken = (): Token => {
       i = 1;
       token = { type: opTable[first], value: 0 };
       break;
-    case isNum(first):
-      while (isNum(code[i])) { i++; }
+    case isNumChar(first):
+      while (isNumStr(code.substr(0, i + 1)) && i < last) { i++; }
       token = { type: IntNum, value: +code.substr(0, i) };
       break;
     default:
-      while (isVar(code.substr(0, i))) { i++; }
+      while (isVar(code.substr(0, i + 1)) && i < last) { i++; }
       token = { type: VarName, value: code.substr(0, i) };
       break;
   }
   codeContainer.setCode(code.substr(i));
   return token;
 };
+
 export default { };
