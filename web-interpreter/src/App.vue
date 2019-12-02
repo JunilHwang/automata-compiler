@@ -1,20 +1,20 @@
 <template>
   <div id="app">
-    <h1>웹 인터프리터</h1>
+    <h1 class="app-title" v-html="appTitle" />
+    <Interpreter />
   </div>
 </template>
 
 <script lang="ts">
 import Vue from 'vue';
 import Component from 'vue-class-component';
+import Interpreter from '@/components/Interpreter.vue';
 
-@Component({
-  name: 'App',
-})
-export default class extends Vue {
-  protected async created() {
-    console.log('test');
-  }
+const components = { Interpreter };
+
+@Component({ components })
+export default class App extends Vue {
+  private appTitle: string = '웹 인터프리터';
 }
 </script>
 

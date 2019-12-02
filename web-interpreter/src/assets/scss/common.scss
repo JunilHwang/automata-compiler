@@ -1,1 +1,16 @@
 *{margin:0;padding:0;}
+body{font-family:Arial, "Malgun Gothic";}
+textarea{background:#222;color:#fff;border:none;width:100%;padding:10px;box-sizing:border-box;font-size:19px;}
+input,textarea,button,select{vertical-align:middle;font-family:inherit;}
+button{border:none;background:none;}
+a{text-decoration:none;color:inherit;}
+
+#app{width:800px;margin:0 auto;padding:50px 0;}
+.app-title{font-size:35px;margin-bottom:10px;font-weight:normal;}
+.btn{cursor:pointer;text-align:center;padding:10px;color:#fff;display:inline-block;
+  &__main{background:#09F;}
+}
+
+.interpreter{
+  &__input{margin-bottom:10px;}
+}
