@@ -1,32 +1,14 @@
-interface Token {
-  type: number;
-  value: number|string;
-}
+import {
+  Token,
+  Lparen, Rparen,
+  IntNum, VarName,
+  Assign,
+  Plus, Minus, Multi, Divi,
+  Print,
+  opTable, symbolTable,
+} from './TokenDefined';
 
-const Print: number = 0;
-const Lparen: number = 1;
-const Rparen: number = 2;
-const Plus: number = 3;
-const Minus: number = 4;
-const Multi: number = 5;
-const Divi: number = 6;
-const Assign: number = 7;
-const IntNum: number = 8;
-const VarName: number = 9;
-const opTable: any = {
-  '(': Lparen,
-  ')': Rparen,
-  '+': Plus,
-  '-': Minus,
-  '*': Multi,
-  '/': Divi,
-  '=': Assign,
-  '?': Print,
-};
-
-let lastTokenNumber = 10;
 let token: Token;
-const symbolTable: any = {};
 const stack: any = [];
 
 class CodeContainer {
@@ -53,7 +35,7 @@ class CodeContainer {
   }
 }
 CodeContainer.init();
-const codeContainer: CodeContainer = CodeContainer.getInstance();
+export const codeContainer: CodeContainer = CodeContainer.getInstance();
 
 const nextToken = () => {
   const code = codeContainer.getCode();
@@ -74,7 +56,7 @@ const nextToken = () => {
       break;
   }
   codeContainer.setCode(code.substr(i));
-}
+};
 
 const statement = () => {
   let key: number|string;
@@ -103,7 +85,7 @@ const expression = () => {
     term();
     operate(operator);
   }
-}
+};
 
 const term = () => {
   factor();
@@ -113,7 +95,7 @@ const term = () => {
     factor();
     operate(operator);
   }
-}
+};
 
 const factor = () => {
   switch (token.type) {
@@ -130,7 +112,7 @@ const factor = () => {
       break;
   }
   nextToken();
-}
+};
 
 const operate = (operator: number) => {
   const [d2, d1] = [stack.pop(), stack.pop()];
@@ -141,13 +123,14 @@ const operate = (operator: number) => {
     case Multi: stack.push(d1 * d2); break;
     case Divi: stack.push(d1 / d2); break;
   }
-}
+};
 
 const resultPrint = () => {
-  const result = stack.pop();
-  console.log(result);
-}
+  return stack.pop();
+};
 
 const checkToken = (tokenType: number): boolean => token.type === tokenType;
 const isNum = (temp: string): boolean => !isNaN(+temp);
 const isVar = (temp: string): boolean => /^[\w\$]+$/.test(temp);
+
+export default { };
