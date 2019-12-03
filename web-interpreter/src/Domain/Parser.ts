@@ -53,7 +53,7 @@ const factor = () => {
     case Lparen:
       token = nextToken();
       expression();
-      checkToken(Rparen, 'Rparen error');
+      checkToken(Rparen, 'Rparen Error');
       break;
   }
   token = nextToken();

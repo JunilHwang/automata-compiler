@@ -1,7 +1,11 @@
 <template>
   <div class="interpreter" @click.prevent="$refs.input.focus()">
     <div class="interpreter__container" ref="container">
-      <p v-for="(v, k) in codeList" :key="k" v-html="v" />
+      <p v-for="(v, k) in codeList"
+        :key="k"
+        v-html="v"
+        :class="{ 'is-error': v.indexOf('Error') !== -1 }"
+      />
       <input
         class="interpreter__input"
         v-model="code"
