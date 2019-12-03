@@ -6,7 +6,7 @@ import {
   Plus, Minus, Multi, Divi, Power,
   Print,
   symbolTable,
-  varKey, endKey, beginKey, Program,
+  varKey, endKey, beginKey, Program, TypeInt, TypeFloat, Empty, Var, Comma,
 } from './TokenDefined';
 import { nextToken } from './Scanner';
 import { eventBus } from '../Helper';
@@ -59,7 +59,11 @@ const factor = () => {
   const { type, value } = token;
   switch (type) {
     case VarName:
-      stack.push(symbolTable.get(String(value)));
+      const symbolValue = symbolTable.get(String(value));
+      if (symbolValue === undefined) {
+        errorMessageAppend(`Error: '${value}' is not assign`);
+      }
+      stack.push(symbolValue);
       break;
     case IntNum:
       stack.push(value);
@@ -85,6 +89,17 @@ const operate = (operator: number) => {
   }
 };
 
+const defineVariable = (type: number) => {
+  do {
+    token = nextToken();
+    checkTokenType(VarName, 'Error: Next token must be \'VarName\'');
+    if (!symbolTable.set(String(token.value), undefined, type)) {
+      errorMessageAppend(`Error: '${token.value}' is already defined Variable`);
+    }
+    token = nextToken();
+  } while (token.type === Comma);
+};
+
 const checkTokenType = (tokenType: number, message: string): void => {
   const checked = token.type === tokenType;
   if (!checked) {
@@ -93,7 +108,6 @@ const checkTokenType = (tokenType: number, message: string): void => {
 };
 
 export const statement = (): void => {
-  console.log('statement start');
   token = nextToken();
   const { type, value } = token;
   const tabIndent = '\t';
@@ -103,7 +117,6 @@ export const statement = (): void => {
         errorMessageAppend('Error: Next state must be \'Var\'');
       }
       token = nextToken();
-      console.log(token);
       checkTokenType(VarName, 'Error: Token Type must be \'VarName(word)\'');
       parserState = NEXT_VAR;
       symbolTable.set(String(token.value));
@@ -116,15 +129,27 @@ export const statement = (): void => {
       tokenAppend(`\n\t${stack.pop()}`);
       break;
     case VarName:
+      if (parserState !== NEXT_END) {
+        errorMessageAppend('Error: Assignment is possible at \'Begin\'');
+      }
       token = nextToken();
       checkTokenType(Assign, 'Error: Token Type must be \'Assign(=)\'');
       token = nextToken();
       expression();
-      symbolTable.set(String(value), stack.pop());
+      if (!symbolTable.put(String(value), stack.pop())) {
+        errorMessageAppend(`Error: '${value}' is not defined Variable`);
+      }
+      lineAppend(tabIndent);
+      break;
+    case TypeInt:
+    case TypeFloat:
+      if (parserState !== NEXT_BEGIN) {
+        errorMessageAppend('Error: Definition is possible at \'Var\'');
+      }
+      defineVariable(type);
       lineAppend(tabIndent);
       break;
   }
-  console.log(symbolTable);
 };
 
 export const checkState = (): boolean => {

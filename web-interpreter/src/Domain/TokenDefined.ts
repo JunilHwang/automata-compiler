@@ -1,6 +1,6 @@
 export interface Token {
   type: number;
-  value: number|string;
+  value?: number|string;
 }
 
 let counter: number = 0;
@@ -22,6 +22,7 @@ export const End: number = counter++;
 export const TypeInt: number = counter++;
 export const TypeFloat: number = counter++;
 export const Empty: number = counter++;
+export const Comma: number = counter++;
 export const printKey = 'print';
 export const programKey = 'Program';
 export const varKey = 'Var';
@@ -43,13 +44,25 @@ export const opTable: any = {
   [endKey]: End,
   'int': TypeInt,
   'float': TypeFloat,
+  ',': Comma,
 };
 export const symbolTable = new class {
   private symbols: any = {};
-  public set(key: string, value: number = 0, type = IntNum) {
-    this.symbols[key] = { type, value };
+  public set(key: string, value: number|undefined = undefined, type = IntNum) {
+    const check = this.symbols[key] === undefined;
+    if (check) {
+      this.symbols[key] = {type, value};
+    }
+    return check;
   }
   public get(key: string) {
     return this.symbols[key].value;
+  }
+  public put(key: string, value: number) {
+    const check = this.symbols[key] !== undefined;
+    if (check) {
+      this.symbols[key].value = value;
+    }
+    return check;
   }
 }();

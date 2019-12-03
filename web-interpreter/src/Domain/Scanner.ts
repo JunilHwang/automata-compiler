@@ -1,6 +1,6 @@
 import {
   Token, opTable, IntNum, VarName, Empty,
-  printKey, programKey,
+  printKey, programKey, TypeInt, TypeFloat,
 } from './TokenDefined';
 import { codeContainer } from './CodeContainer';
 import { isNumChar, isNumStr, isVar } from '@/Helper';
@@ -14,22 +14,30 @@ export const nextToken = (): Token => {
   switch (true) {
     case opTable[first] !== undefined:
       i = 1;
-      token = { type: opTable[first], value: 0 };
+      token = { type: opTable[first] };
       break;
     case code.indexOf(printKey) === 0:
       i = printKey.length;
-      token = { type: opTable[printKey], value: 0 };
+      token = { type: opTable[printKey] };
       break;
     case code.indexOf(programKey) === 0:
       i = programKey.length;
-      token = { type: opTable[programKey], value: 0 };
+      token = { type: opTable[programKey] };
       break;
     case isNumChar(first):
       while (isNumStr(code.substr(0, i + 1)) && i < last) { i++; }
       token = { type: IntNum, value: +code.substr(0, i) };
       break;
+    case code.indexOf('int') === 0:
+      i = 3;
+      token = { type: TypeInt };
+      break;
+    case code.indexOf('float') === 0:
+      i = 5;
+      token = { type: TypeFloat };
+      break;
     case code.length === 0 :
-      token = { type: Empty, value: 0 };
+      token = { type: Empty };
       break;
     default:
       while (isVar(code.substr(0, i + 1)) && i < last) { i++; }
