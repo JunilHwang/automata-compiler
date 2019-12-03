@@ -3,7 +3,7 @@ import {
   Lparen, Rparen,
   IntNum, VarName,
   Assign,
-  Plus, Minus, Multi, Divi,
+  Plus, Minus, Multi, Divi, Power,
   Print,
   symbolTable,
 } from './TokenDefined';
@@ -15,21 +15,29 @@ const stack: any = [];
 const expression = () => {
   term();
   while ([Plus, Minus].indexOf(token.type) !== -1) {
-    const operator = token.type;
-    token = nextToken();
-    term();
-    operate(operator);
+    operateCallee(term);
   }
 };
 
 const term = () => {
-  factor();
+  pow();
   while ([Multi, Divi].indexOf(token.type) !== -1) {
-    const operator = token.type;
-    token = nextToken();
-    factor();
-    operate(operator);
+    operateCallee(pow);
   }
+};
+
+const pow = () => {
+  factor();
+  while (token.type === Power) {
+    operateCallee(factor);
+  }
+};
+
+const operateCallee = (callback: any) => {
+  const operator = token.type;
+  token = nextToken();
+  callback();
+  operate(operator);
 };
 
 const factor = () => {
@@ -57,6 +65,7 @@ const operate = (operator: number) => {
     case Minus: stack.push(d1 - d2); break;
     case Multi: stack.push(d1 * d2); break;
     case Divi: stack.push(d1 / d2); break;
+    case Power: stack.push(Math.pow(d1, d2)); break;
   }
 };
 
@@ -79,6 +88,7 @@ export const statement = (): string => {
       symbolTable[key] = stack.pop();
       break;
   }
+  console.log(symbolTable);
   return '';
 };
 

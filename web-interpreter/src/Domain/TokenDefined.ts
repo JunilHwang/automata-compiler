@@ -3,16 +3,18 @@ export interface Token {
   value: number|string;
 }
 
-export const Print: number = 0;
-export const Lparen: number = 1;
-export const Rparen: number = 2;
-export const Plus: number = 3;
-export const Minus: number = 4;
-export const Multi: number = 5;
-export const Divi: number = 6;
-export const Assign: number = 7;
-export const IntNum: number = 8;
-export const VarName: number = 9;
+let counter: number = 0;
+export const Print: number = counter++;
+export const Lparen: number = counter++;
+export const Rparen: number = counter++;
+export const Plus: number = counter++;
+export const Minus: number = counter++;
+export const Multi: number = counter++;
+export const Divi: number = counter++;
+export const Power: number = counter++;
+export const Assign: number = counter++;
+export const IntNum: number = counter++;
+export const VarName: number = counter++;
 export const opTable: any = {
   '(': Lparen,
   ')': Rparen,
@@ -20,6 +22,7 @@ export const opTable: any = {
   '-': Minus,
   '*': Multi,
   '/': Divi,
+  '^': Power,
   '=': Assign,
   '?': Print,
 };
