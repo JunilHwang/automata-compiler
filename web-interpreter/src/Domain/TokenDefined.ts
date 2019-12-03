@@ -26,4 +26,19 @@ export const opTable: any = {
   '=': Assign,
   'print': Print,
 };
-export const symbolTable: any = { };
+export const symbolTable = new class {
+  private symbols: any = {};
+  private temp: any = {};
+  public capture(temp: any) {
+    this.temp = temp;
+  }
+  public rollback() {
+    this.symbols = this.temp;
+  }
+  public set(key: string, value: number, type = IntNum) {
+    this.symbols[key] = { type, value };
+  }
+  public get(key: string) {
+    return this.symbols[key].value;
+  }
+}();

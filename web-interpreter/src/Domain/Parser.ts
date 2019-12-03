@@ -41,12 +41,13 @@ const operateCallee = (callback: any) => {
 };
 
 const factor = () => {
-  switch (token.type) {
+  const { type, value } = token;
+  switch (type) {
     case VarName:
-      stack.push(symbolTable[token.value]);
+      stack.push(symbolTable.get(String(value)));
       break;
     case IntNum:
-      stack.push(token.value);
+      stack.push(value);
       break;
     case Lparen:
       token = nextToken();
@@ -72,20 +73,19 @@ const operate = (operator: number) => {
 const checkToken = (tokenType: number): boolean => token.type === tokenType;
 
 export const statement = (): string => {
-  let key: number|string;
   token = nextToken();
-  switch (token.type) {
+  const { type, value } = token;
+  switch (type) {
     case Print:
       token = nextToken();
       expression();
       return `\n${stack.pop()}`;
     case VarName:
-      key = token.value;
       token = nextToken();
       checkToken(Assign);
       token = nextToken();
       expression();
-      symbolTable[key] = stack.pop();
+      symbolTable.set(String(value), stack.pop());
       break;
   }
   console.log(symbolTable);
