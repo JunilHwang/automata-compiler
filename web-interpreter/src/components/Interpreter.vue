@@ -16,8 +16,15 @@ export default class Interpreter extends Vue {
   private code: string = '';
   protected parsing({ currentTarget }: any) {
     const lastLine: string = this.code.split('\n').pop() || '';
-    codeContainer.setCode(lastLine);
-    this.code += statement();
+    const tokens = lastLine.replace(/\n/g, '').split(";");
+    tokens.pop();
+    while (tokens[0] !== undefined) {
+      const token: string = tokens.pop() || '';
+      if (token.length) {
+        codeContainer.setCode(token);
+        this.code += statement();
+      }
+    }
   }
 }
 </script>
