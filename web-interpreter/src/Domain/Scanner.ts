@@ -20,6 +20,10 @@ export const nextToken = (): Token => {
       i = printKey.length;
       token = { type: opTable[printKey], value: 0 };
       break;
+    case code.indexOf(programKey) === 0:
+      i = programKey.length;
+      token = { type: opTable[programKey], value: 0 };
+      break;
     case isNumChar(first):
       while (isNumStr(code.substr(0, i + 1)) && i < last) { i++; }
       token = { type: IntNum, value: +code.substr(0, i) };

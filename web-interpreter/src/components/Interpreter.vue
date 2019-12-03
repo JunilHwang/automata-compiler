@@ -3,34 +3,34 @@
     <div class="interpreter__container" ref="container">
       <p v-for="(v, k) in codeList"
         :key="k"
-        v-html="v"
-        :class="{ 'is-error': v.indexOf('Error') !== -1 }"
+        v-html="v.replace(/\t/g, '&nbsp;&nbsp;&nbsp;&nbsp;')"
       />
       <input
         class="interpreter__input"
         v-model="code"
         ref="input"
         @keydown.enter="parsing"
-        @keydown.tab.prevent="code += '    '"
+        @keydown.tab.prevent="code += '\t'"
         autofocus
       />
     </div>
-    <a href="#" class="btn btn__main">테스트코드 삽입</a>
+    <div class="interpreter__error" v-if="errorText.length" v-html="errorText" />
   </div>
 </template>
 
 <script lang="ts">
 import Vue from 'vue';
 import Component from 'vue-class-component';
-import { statement, checkState } from '../Domain/Parser';
-import { codeContainer } from '../Domain/CodeContainer';
+import { statement, checkState } from '@/Domain/Parser';
+import { codeContainer } from '@/Domain/CodeContainer';
 import { Watch } from 'vue-property-decorator';
-import { eventBus } from '../Helper';
+import { eventBus } from '@/Helper';
 
 @Component
 export default class Interpreter extends Vue {
   private codeList: string[] = [];
   private code: string = '';
+  private errorText: string = '';
   @Watch('codeList')
   private onCodeListChange() {
     const { container }: any = this.$refs;
@@ -39,17 +39,21 @@ export default class Interpreter extends Vue {
     });
   }
   private created() {
+    const { codeList } = this;
     eventBus.$on('tokenError', (message: string) => {
-      this.codeList.push(this.code, message);
-      this.code = '';
+      this.errorText = message;
     });
     eventBus.$on('tokenAppend', (token: string) => {
-      this.codeList.push(token);
+      codeList.push(token);
+    });
+    eventBus.$on('lineAppend', (indent: string) => {
+      codeList.push(`${indent}${this.code}`);
+      this.code = '';
+      this.errorText = '';
     });
   }
   private parsing() {
     const { code, codeList } = this;
-    let indent: string = '';
     codeContainer.setCode(code);
     if (!checkState()) {
       const tokens = code.split(';').filter((v: string) => v.trim().length);
@@ -57,10 +61,7 @@ export default class Interpreter extends Vue {
         codeContainer.setCode(token);
         statement();
       });
-      indent = '&nbsp;&nbsp;&nbsp;&nbsp;';
     }
-    codeList.push(`${indent}${code}`);
-    this.code = '';
   }
 }
 </script>

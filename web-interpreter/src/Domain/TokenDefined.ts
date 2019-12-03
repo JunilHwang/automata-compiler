@@ -48,7 +48,7 @@ export const symbolTable = new class {
   public rollback() {
     this.symbols = this.temp;
   }
-  public set(key: string, value: number, type = IntNum) {
+  public set(key: string, value: number = 0, type = IntNum) {
     this.symbols[key] = { type, value };
   }
   public get(key: string) {

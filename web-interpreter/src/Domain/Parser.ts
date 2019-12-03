@@ -6,7 +6,7 @@ import {
   Plus, Minus, Multi, Divi, Power,
   Print,
   symbolTable,
-  programKey, varKey, endKey, beginKey,
+  programKey, varKey, endKey, beginKey, Program, Var,
 } from './TokenDefined';
 import { nextToken } from './Scanner';
 import { eventBus } from '../Helper';
@@ -86,15 +86,6 @@ const operate = (operator: number) => {
   }
 };
 
-const errorMessageAppend = (message: string) => {
-  eventBus.$emit('tokenError', message);
-  throw message;
-};
-
-const tokenAppend = (message: string) => {
-  eventBus.$emit('tokenAppend', message);
-};
-
 const checkToken = (tokenType: number, message: string): void => {
   const checked = token.type === tokenType;
   if (!checked) {
@@ -105,18 +96,31 @@ const checkToken = (tokenType: number, message: string): void => {
 export const statement = (): void => {
   token = nextToken();
   const { type, value } = token;
+  const tabIndent = '\t';
   switch (type) {
+    case Program:
+      if (nextStateChecker[programKey] !== parserState) {
+        errorMessageAppend('Error: Next state must be \'Var\'');
+      }
+      token = nextToken();
+      checkToken(VarName, 'Error: Token Type must be \'VarName(word)\'');
+      parserState = NEXT_VAR;
+      symbolTable.set(String(token.value));
+      lineAppend();
+      break;
     case Print:
       token = nextToken();
       expression();
-      setTimeout(() => tokenAppend(`\n&nbsp;&nbsp;&nbsp;&nbsp;${stack.pop()}`));
+      lineAppend(tabIndent);
+      tokenAppend(`\n\t${stack.pop()}`);
       break;
     case VarName:
       token = nextToken();
-      checkToken(Assign, 'Assign Error');
+      checkToken(Assign, 'Error: Token Type must be \'Assign(=)\'');
       token = nextToken();
       expression();
       symbolTable.set(String(value), stack.pop());
+      lineAppend(tabIndent);
       break;
   }
 };
@@ -128,11 +132,19 @@ export const checkState = (): boolean => {
   if (checked) {
     if (next === parserState) {
       parserState = (parserState + 1) % stateCounter;
+      lineAppend();
     } else {
       errorMessageAppend(`Error : Next state is not ${code}`);
     }
   }
   return checked;
 };
+
+const errorMessageAppend = (message: string) => {
+  eventBus.$emit('tokenError', message);
+  throw new Error(message);
+};
+const tokenAppend = (message: string) => eventBus.$emit('tokenAppend', message);
+const lineAppend = (indent: string = '') => eventBus.$emit('lineAppend', indent);
 
 export default { };
