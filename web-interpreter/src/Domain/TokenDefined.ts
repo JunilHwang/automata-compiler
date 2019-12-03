@@ -19,6 +19,9 @@ export const Program: number = counter++;
 export const Var: number = counter++;
 export const Begin: number = counter++;
 export const End: number = counter++;
+export const TypeInt: number = counter++;
+export const TypeFloat: number = counter++;
+export const Empty: number = counter++;
 export const printKey = 'print';
 export const programKey = 'Program';
 export const varKey = 'Var';
@@ -38,16 +41,11 @@ export const opTable: any = {
   [varKey]: Var,
   [beginKey]: Begin,
   [endKey]: End,
+  'int': TypeInt,
+  'float': TypeFloat,
 };
 export const symbolTable = new class {
   private symbols: any = {};
-  private temp: any = {};
-  public capture() {
-    this.temp = this.symbols;
-  }
-  public rollback() {
-    this.symbols = this.temp;
-  }
   public set(key: string, value: number = 0, type = IntNum) {
     this.symbols[key] = { type, value };
   }

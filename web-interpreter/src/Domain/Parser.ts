@@ -6,7 +6,7 @@ import {
   Plus, Minus, Multi, Divi, Power,
   Print,
   symbolTable,
-  programKey, varKey, endKey, beginKey, Program, Var,
+  varKey, endKey, beginKey, Program,
 } from './TokenDefined';
 import { nextToken } from './Scanner';
 import { eventBus } from '../Helper';
@@ -18,7 +18,6 @@ const NEXT_VAR = stateCounter++;
 const NEXT_BEGIN = stateCounter++;
 const NEXT_END = stateCounter++;
 const nextStateChecker: any = {
-  [programKey]: NEXT_PROGRAM,
   [varKey]: NEXT_VAR,
   [endKey]: NEXT_END,
   [beginKey]: NEXT_BEGIN,
@@ -68,7 +67,7 @@ const factor = () => {
     case Lparen:
       token = nextToken();
       expression();
-      checkToken(Rparen, 'Rparen Error');
+      checkTokenType(Rparen, 'Rparen Error');
       break;
   }
   token = nextToken();
@@ -86,7 +85,7 @@ const operate = (operator: number) => {
   }
 };
 
-const checkToken = (tokenType: number, message: string): void => {
+const checkTokenType = (tokenType: number, message: string): void => {
   const checked = token.type === tokenType;
   if (!checked) {
     errorMessageAppend(message);
@@ -94,16 +93,18 @@ const checkToken = (tokenType: number, message: string): void => {
 };
 
 export const statement = (): void => {
+  console.log('statement start');
   token = nextToken();
   const { type, value } = token;
   const tabIndent = '\t';
   switch (type) {
     case Program:
-      if (nextStateChecker[programKey] !== parserState) {
+      if (parserState !== NEXT_PROGRAM) {
         errorMessageAppend('Error: Next state must be \'Var\'');
       }
       token = nextToken();
-      checkToken(VarName, 'Error: Token Type must be \'VarName(word)\'');
+      console.log(token);
+      checkTokenType(VarName, 'Error: Token Type must be \'VarName(word)\'');
       parserState = NEXT_VAR;
       symbolTable.set(String(token.value));
       lineAppend();
@@ -116,13 +117,14 @@ export const statement = (): void => {
       break;
     case VarName:
       token = nextToken();
-      checkToken(Assign, 'Error: Token Type must be \'Assign(=)\'');
+      checkTokenType(Assign, 'Error: Token Type must be \'Assign(=)\'');
       token = nextToken();
       expression();
       symbolTable.set(String(value), stack.pop());
       lineAppend(tabIndent);
       break;
   }
+  console.log(symbolTable);
 };
 
 export const checkState = (): boolean => {

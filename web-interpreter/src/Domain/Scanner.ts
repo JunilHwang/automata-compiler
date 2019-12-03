@@ -1,6 +1,6 @@
 import {
-  Token, opTable, IntNum, VarName,
-  printKey, programKey, varKey, beginKey, endKey,
+  Token, opTable, IntNum, VarName, Empty,
+  printKey, programKey,
 } from './TokenDefined';
 import { codeContainer } from './CodeContainer';
 import { isNumChar, isNumStr, isVar } from '@/Helper';
@@ -27,6 +27,9 @@ export const nextToken = (): Token => {
     case isNumChar(first):
       while (isNumStr(code.substr(0, i + 1)) && i < last) { i++; }
       token = { type: IntNum, value: +code.substr(0, i) };
+      break;
+    case code.length === 0 :
+      token = { type: Empty, value: 0 };
       break;
     default:
       while (isVar(code.substr(0, i + 1)) && i < last) { i++; }
