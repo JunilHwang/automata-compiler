@@ -11,6 +11,7 @@
         v-model="code"
         ref="input"
         @keydown.enter="parsing"
+        @keydown.tab.prevent="code += '    '"
         autofocus
       />
     </div>
@@ -21,7 +22,7 @@
 <script lang="ts">
 import Vue from 'vue';
 import Component from 'vue-class-component';
-import { statement } from '../Domain/Parser';
+import { statement, checkState } from '../Domain/Parser';
 import { codeContainer } from '../Domain/CodeContainer';
 import { Watch } from 'vue-property-decorator';
 import { eventBus } from '../Helper';
@@ -40,26 +41,27 @@ export default class Interpreter extends Vue {
   }
 
   private created() {
-    eventBus.$on('tokenError', message => {      
+    eventBus.$on('tokenError', (message: string) => {      
       this.codeList.push(this.code, message);
       this.code = '';
     });
+    eventBus.$on('tokenAppend', (token: string) => {      
+      this.codeList.push(token);
+    });
   }
   
-  private parsing({ currentTarget }: any) {
+  private parsing() {
+    codeContainer.setCode(this.code);
+    checkState();
     const { code, codeList } = this;
-    const tokens = code.split(";");
-    tokens.pop();
-    while (tokens[0] !== undefined) {
-      const token: string = tokens.pop() || '';
-      if (token.length) {
-        codeContainer.setCode(token);
-        const result: string = statement();
-        if (result.length) { 
-          setTimeout(() => codeList.push(result));
-        }
+    const tokens = code.split(';').filter((v: string) => v.trim().length);
+    tokens.forEach((token: string) => {
+      codeContainer.setCode(token);
+      const result: string = statement();
+      if (result.length) {
+        setTimeout(() => codeList.push(result));
       }
-    }
+    });
     codeList.push(code);
     this.code = '';
   }

@@ -15,6 +15,15 @@ export const Power: number = counter++;
 export const Assign: number = counter++;
 export const IntNum: number = counter++;
 export const VarName: number = counter++;
+export const Program: number = counter++;
+export const Var: number = counter++;
+export const Begin: number = counter++;
+export const End: number = counter++;
+export const printKey = 'print';
+export const programKey = 'Program';
+export const varKey = 'Var';
+export const beginKey = 'Begin';
+export const endKey = 'End';
 export const opTable: any = {
   '(': Lparen,
   ')': Rparen,
@@ -24,7 +33,11 @@ export const opTable: any = {
   '/': Divi,
   '^': Power,
   '=': Assign,
-  'print': Print,
+  [printKey]: Print,
+  [programKey]: Program,
+  [varKey]: Var,
+  [beginKey]: Begin,
+  [endKey]: End,
 };
 export const symbolTable = new class {
   private symbols: any = {};

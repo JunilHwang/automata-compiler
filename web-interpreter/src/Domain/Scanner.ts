@@ -1,4 +1,7 @@
-import { Token, opTable, IntNum, VarName } from './TokenDefined';
+import {
+  Token, opTable, IntNum, VarName,
+  printKey, programKey, varKey, beginKey, endKey,
+} from './TokenDefined';
 import { codeContainer } from './CodeContainer';
 import { isNumChar, isNumStr, isVar } from '@/Helper';
 
@@ -6,7 +9,6 @@ export const nextToken = (): Token => {
   const code = codeContainer.getCode();
   const first = codeContainer.getFirst();
   const last = code.length;
-  const printKey = 'print';
   let token: Token;
   let i = 0;
   switch (true) {
