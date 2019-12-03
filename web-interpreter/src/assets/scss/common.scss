@@ -1,6 +1,5 @@
 *{margin:0;padding:0;}
 body{font-family:Arial, "Malgun Gothic";}
-textarea{background:#222;color:#fff;border:none;width:100%;padding:10px;box-sizing:border-box;font-size:19px;}
 input,textarea,button,select{vertical-align:middle;font-family:inherit;}
 button{border:none;background:none;}
 a{text-decoration:none;color:inherit;}
@@ -12,5 +11,8 @@ a{text-decoration:none;color:inherit;}
 }
 
 .interpreter{
-  &__input{margin-bottom:10px;}
+  &__container{margin-bottom:10px;background:#222;color:#fff;height:400px;font-size:19px;color:#fff;padding:10px;line-height:30px;overflow:auto;}
+  &__input{background:transparent;border:none;width:100%;box-sizing:border-box;font-size:19px;color:#fff;height:30px;
+    &:focus{outline:none;}
+  }
 }
