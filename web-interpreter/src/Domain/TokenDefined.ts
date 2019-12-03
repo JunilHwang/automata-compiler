@@ -24,6 +24,6 @@ export const opTable: any = {
   '/': Divi,
   '^': Power,
   '=': Assign,
-  '?': Print,
+  'print': Print,
 };
 export const symbolTable: any = { };

@@ -6,12 +6,17 @@ export const nextToken = (): Token => {
   const code = codeContainer.getCode();
   const first = codeContainer.getFirst();
   const last = code.length;
+  const printKey = 'print';
   let token: Token;
   let i = 0;
   switch (true) {
     case opTable[first] !== undefined:
       i = 1;
       token = { type: opTable[first], value: 0 };
+      break;
+    case code.indexOf(printKey) === 0:
+      i = printKey.length;
+      token = { type: opTable[printKey], value: 0 };
       break;
     case isNumChar(first):
       while (isNumStr(code.substr(0, i + 1)) && i < last) { i++; }
