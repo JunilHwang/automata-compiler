@@ -20,6 +20,7 @@ import Component from 'vue-class-component';
 import { statement } from '../Domain/Parser';
 import { codeContainer } from '../Domain/CodeContainer';
 import { Watch } from 'vue-property-decorator';
+import { eventBus } from '../Helper';
 
 @Component
 export default class Interpreter extends Vue {
@@ -33,8 +34,15 @@ export default class Interpreter extends Vue {
       container.scrollTo(0, container.scrollHeight);
     });
   }
+
+  private created() {
+    eventBus.$on('tokenError', message => {      
+      this.codeList.push(this.code, message);
+      this.code = '';
+    });
+  }
   
-  protected parsing({ currentTarget }: any) {
+  private parsing({ currentTarget }: any) {
     const { code, codeList } = this;
     const tokens = code.split(";");
     tokens.pop();

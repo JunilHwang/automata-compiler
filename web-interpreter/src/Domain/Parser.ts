@@ -8,6 +8,7 @@ import {
   symbolTable,
 } from './TokenDefined';
 import { nextToken } from './Scanner';
+import { eventBus } from '../Helper';
 
 let token: Token;
 const stack: any = [];
@@ -52,7 +53,7 @@ const factor = () => {
     case Lparen:
       token = nextToken();
       expression();
-      checkToken(Rparen);
+      checkToken(Rparen, 'Rparen error');
       break;
   }
   token = nextToken();
@@ -70,7 +71,13 @@ const operate = (operator: number) => {
   }
 };
 
-const checkToken = (tokenType: number): boolean => token.type === tokenType;
+const checkToken = (tokenType: number, message: string): void => {
+  const checked = token.type === tokenType;
+  if (!checked) {
+    eventBus.$emit('tokenError', message);
+    throw message;
+  }
+};
 
 export const statement = (): string => {
   token = nextToken();
@@ -82,13 +89,12 @@ export const statement = (): string => {
       return `\n${stack.pop()}`;
     case VarName:
       token = nextToken();
-      checkToken(Assign);
+      checkToken(Assign, 'Assign Error');
       token = nextToken();
       expression();
       symbolTable.set(String(value), stack.pop());
       break;
   }
-  console.log(symbolTable);
   return '';
 };
 

@@ -29,8 +29,8 @@ export const opTable: any = {
 export const symbolTable = new class {
   private symbols: any = {};
   private temp: any = {};
-  public capture(temp: any) {
-    this.temp = temp;
+  public capture() {
+    this.temp = this.symbols;
   }
   public rollback() {
     this.symbols = this.temp;
