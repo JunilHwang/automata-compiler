@@ -31,7 +31,6 @@ import { eventBus } from '../Helper';
 export default class Interpreter extends Vue {
   private codeList: string[] = [];
   private code: string = '';
-
   @Watch('codeList')
   private onCodeListChange() {
     const { container }: any = this.$refs;
@@ -39,30 +38,28 @@ export default class Interpreter extends Vue {
       container.scrollTo(0, container.scrollHeight);
     });
   }
-
   private created() {
-    eventBus.$on('tokenError', (message: string) => {      
+    eventBus.$on('tokenError', (message: string) => {
       this.codeList.push(this.code, message);
       this.code = '';
     });
-    eventBus.$on('tokenAppend', (token: string) => {      
+    eventBus.$on('tokenAppend', (token: string) => {
       this.codeList.push(token);
     });
   }
-  
   private parsing() {
-    codeContainer.setCode(this.code);
-    checkState();
     const { code, codeList } = this;
-    const tokens = code.split(';').filter((v: string) => v.trim().length);
-    tokens.forEach((token: string) => {
-      codeContainer.setCode(token);
-      const result: string = statement();
-      if (result.length) {
-        setTimeout(() => codeList.push(result));
-      }
-    });
-    codeList.push(code);
+    let indent: string = '';
+    codeContainer.setCode(code);
+    if (!checkState()) {
+      const tokens = code.split(';').filter((v: string) => v.trim().length);
+      tokens.forEach((token: string) => {
+        codeContainer.setCode(token);
+        statement();
+      });
+      indent = '&nbsp;&nbsp;&nbsp;&nbsp;';
+    }
+    codeList.push(`${indent}${code}`);
     this.code = '';
   }
 }

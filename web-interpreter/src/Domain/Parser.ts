@@ -102,14 +102,15 @@ const checkToken = (tokenType: number, message: string): void => {
   }
 };
 
-export const statement = (): string => {
+export const statement = (): void => {
   token = nextToken();
   const { type, value } = token;
   switch (type) {
     case Print:
       token = nextToken();
       expression();
-      return `\n${stack.pop()}`;
+      setTimeout(() => tokenAppend(`\n&nbsp;&nbsp;&nbsp;&nbsp;${stack.pop()}`));
+      break;
     case VarName:
       token = nextToken();
       checkToken(Assign, 'Assign Error');
@@ -118,19 +119,20 @@ export const statement = (): string => {
       symbolTable.set(String(value), stack.pop());
       break;
   }
-  return '';
 };
 
-export const checkState = () => {
+export const checkState = (): boolean => {
   const code = codeContainer.getCode();
   const next = nextStateChecker[code];
-  if (next !== undefined) {
+  const checked: boolean = next !== undefined;
+  if (checked) {
     if (next === parserState) {
       parserState = (parserState + 1) % stateCounter;
     } else {
       errorMessageAppend(`Error : Next state is not ${code}`);
     }
   }
+  return checked;
 };
 
 export default { };
