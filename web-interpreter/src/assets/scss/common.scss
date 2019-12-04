@@ -4,16 +4,24 @@ input,textarea,button,select{vertical-align:middle;font-family:inherit;}
 button{border:none;background:none;}
 a{text-decoration:none;color:inherit;}
 
-#app{width:800px;margin:0 auto;padding:50px 0;}
+#app{width:1000px;margin:0 auto;padding:50px 0;}
 .app-title{font-size:35px;margin-bottom:10px;font-weight:normal;}
 .btn{cursor:pointer;text-align:center;padding:10px;color:#fff;display:inline-block;
   &__main{background:#09F;}
 }
 
 .interpreter{
-  &__container{background:#222;color:#fff;height:400px;font-size:19px;color:#fff;padding:10px;line-height:30px;overflow:auto;}
-  &__input{background:transparent;border:none;width:100%;box-sizing:border-box;font-size:19px;color:#fff;height:30px;
+  &__container{display:flex;align-items:flex-start;font-size:19px;line-height:30px;position:relative;
+    &::before,
+    &::after{display:block;position:absolute;top:0;font-size:13px;z-index:10;}
+    &::before{content:"Input";right:410px;color:#ddd;}
+    &::after{content:"Output";right:10px;color:#ddd;}
+    >div{height:380px;padding:10px;overflow:auto;color:#fff;position:relative;}
+  }
+  &__stack{background:#222;width:580px;}
+  &__output{background:#999;width:380px;}
+  &__input{background:transparent;border:none;width:100%;box-sizing:border-box;font-size:inherit;color:#fff;height:30px;
     &:focus{outline:none;}
   }
-  &__error{background:#faa;color:#fff;line-height:30px;font-size:19px;padding:0 10px;}
+  &__error{background:#faa;color:#fff;line-height:30px;padding:0 10px;}
 }

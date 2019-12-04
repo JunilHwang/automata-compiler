@@ -50,7 +50,7 @@ export const opTable: any = {
 };
 export const symbolTable = new class {
   private symbols: any = {};
-  public set(key: string, value: number|undefined = undefined, type = IntNum) {
+  public set(key: string, value: number|null = null, type = IntNum) {
     const check = this.symbols[key] === undefined;
     if (check) {
       this.symbols[key] = {type, value};
@@ -61,7 +61,7 @@ export const symbolTable = new class {
     return this.symbols[key].value;
   }
   public put(key: string, value: number) {
-    const check = this.symbols[key] !== undefined;
+    const check = this.symbols[key] !== null;
     if (check) {
       this.symbols[key].value = value;
     }

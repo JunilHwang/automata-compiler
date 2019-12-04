@@ -1,18 +1,23 @@
 <template>
   <div class="interpreter" @click.prevent="$refs.input.focus()">
-    <div class="interpreter__container" ref="container">
-      <p v-for="(v, k) in codeList"
-        :key="k"
-        v-html="v.replace(/\t/g, '&nbsp;&nbsp;&nbsp;&nbsp;')"
-      />
-      <input
-        class="interpreter__input"
-        v-model="code"
-        ref="input"
-        @keydown.enter="parsing"
-        @keydown.tab.prevent="code += '\t'"
-        autofocus
-      />
+    <div class="interpreter__container">
+      <div class="interpreter__stack" ref="stackContainer">
+        <p v-for="(v, k) in codeList"
+          :key="k"
+          v-html="v.replace(/\t/g, '&nbsp;&nbsp;&nbsp;&nbsp;')"
+        />
+        <input
+          class="interpreter__input"
+          v-model="code"
+          ref="input"
+          @keydown.enter="parsing"
+          @keydown.tab.prevent="code += '\t'"
+          autofocus
+        />
+      </div>
+      <div class="interpreter__output" ref="outputContainer">
+        <p v-for="(v, k) in outputList" v-html="v" :key="k" />
+      </div>
     </div>
     <div class="interpreter__error" v-if="errorText.length" v-html="errorText" />
   </div>
@@ -31,17 +36,25 @@ export default class Interpreter extends Vue {
   private codeList: string[] = [];
   private code: string = '';
   private errorText: string = '';
+  private outputList: string[] = [];
   @Watch('codeList')
   private onCodeListChange() {
-    const { container }: any = this.$refs;
+    const { stackContainer }: any = this.$refs;
     this.$nextTick(() => {
-      container.scrollTo(0, container.scrollHeight);
+      stackContainer.scrollTo(0, stackContainer.scrollHeight);
+    });
+  }
+  @Watch('outputList')
+  private onOutputListChange() {
+    const { outputContainer }: any = this.$refs;
+    this.$nextTick(() => {
+      outputContainer.scrollTo(0, outputContainer.scrollHeight);
     });
   }
   private created() {
-    const { codeList } = this;
-    eventBus.$on('tokenError', (message: string) => {
-      this.errorText = message;
+    const { codeList, outputList } = this;
+    eventBus.$on('outputAppend', (output: string) => {
+      outputList.push(output);
     });
     eventBus.$on('tokenAppend', (token: string) => {
       codeList.push(token);
@@ -50,6 +63,9 @@ export default class Interpreter extends Vue {
       codeList.push(`${indent}${this.code}`);
       this.code = '';
       this.errorText = '';
+    });
+    eventBus.$on('tokenError', (message: string) => {
+      this.errorText = message;
     });
   }
   private parsing() {

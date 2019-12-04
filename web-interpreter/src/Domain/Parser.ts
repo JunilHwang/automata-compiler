@@ -60,7 +60,7 @@ const factor = () => {
   switch (type) {
     case VarName:
       const symbolValue = symbolTable.get(String(value));
-      if (symbolValue === undefined) {
+      if (symbolValue === null) {
         errorMessageAppend(`Error: '${value}' is not assign`);
       }
       stack.push(symbolValue);
@@ -93,7 +93,7 @@ const defineVariable = (type: number) => {
   do {
     token = nextToken();
     checkTokenType(VarName, 'Error: Next token must be \'VarName\'');
-    if (!symbolTable.set(String(token.value), undefined, type)) {
+    if (!symbolTable.set(String(token.value), null, type)) {
       errorMessageAppend(`Error: '${token.value}' is already defined Variable`);
     }
     token = nextToken();
@@ -127,7 +127,7 @@ export const statement = (): void => {
       case Print:
         token = nextToken();
         expression();
-        tokenAppend(`\n\t${stack.pop()}`);
+        outputAppend(stack.pop());
         break;
       case VarName:
         if (parserState !== NEXT_END) {
@@ -138,7 +138,7 @@ export const statement = (): void => {
         token = nextToken();
         expression();
         if (!symbolTable.put(String(startTokenValue), stack.pop())) {
-          errorMessageAppend(`Error: '${startTokenValue}' is not defined Variable`);
+          errorMessageAppend(`Error: '${startTokenValue}' undefined`);
         }
         break;
       case TypeInt:
@@ -178,5 +178,6 @@ const errorMessageAppend = (message: string) => {
 };
 const tokenAppend = (message: string) => eventBus.$emit('tokenAppend', message);
 const lineAppend = (indent: string = '') => eventBus.$emit('lineAppend', indent);
+const outputAppend = (output: string = '') => eventBus.$emit('outputAppend', output);
 
 export default { };
