@@ -6,7 +6,7 @@ import {
   Plus, Minus, Multi, Divi, Power,
   Print,
   symbolTable,
-  varKey, endKey, beginKey, Program, TypeInt, TypeFloat, Empty, Var, Comma,
+  varKey, endKey, beginKey, Program, TypeInt, TypeFloat, Empty, Var, Comma, Semicolon,
 } from './TokenDefined';
 import { nextToken } from './Scanner';
 import { eventBus } from '../Helper';
@@ -19,8 +19,8 @@ const NEXT_BEGIN = stateCounter++;
 const NEXT_END = stateCounter++;
 const nextStateChecker: any = {
   [varKey]: NEXT_VAR,
-  [endKey]: NEXT_END,
   [beginKey]: NEXT_BEGIN,
+  [endKey]: NEXT_END,
 };
 
 let token: Token;
@@ -109,47 +109,52 @@ const checkTokenType = (tokenType: number, message: string): void => {
 
 export const statement = (): void => {
   token = nextToken();
-  const { type, value } = token;
-  const tabIndent = '\t';
-  switch (type) {
-    case Program:
-      if (parserState !== NEXT_PROGRAM) {
-        errorMessageAppend('Error: Next state must be \'Var\'');
-      }
-      token = nextToken();
-      checkTokenType(VarName, 'Error: Token Type must be \'VarName(word)\'');
-      parserState = NEXT_VAR;
-      symbolTable.set(String(token.value));
-      lineAppend();
-      break;
-    case Print:
-      token = nextToken();
-      expression();
-      lineAppend(tabIndent);
-      tokenAppend(`\n\t${stack.pop()}`);
-      break;
-    case VarName:
-      if (parserState !== NEXT_END) {
-        errorMessageAppend('Error: Assignment is possible at \'Begin\'');
-      }
-      token = nextToken();
-      checkTokenType(Assign, 'Error: Token Type must be \'Assign(=)\'');
-      token = nextToken();
-      expression();
-      if (!symbolTable.put(String(value), stack.pop())) {
-        errorMessageAppend(`Error: '${value}' is not defined Variable`);
-      }
-      lineAppend(tabIndent);
-      break;
-    case TypeInt:
-    case TypeFloat:
-      if (parserState !== NEXT_BEGIN) {
-        errorMessageAppend('Error: Definition is possible at \'Var\'');
-      }
-      defineVariable(type);
-      lineAppend(tabIndent);
-      break;
-  }
+  let indent = '\t';
+  do {
+    const { type: startTokenType, value: startTokenValue } = token;
+    switch (startTokenType) {
+      case Program:
+        if (parserState !== NEXT_PROGRAM) {
+          errorMessageAppend('Error: Next state must be \'Var\'');
+        }
+        token = nextToken();
+        checkTokenType(VarName, 'Error: Token Type must be \'VarName(word)\'');
+        parserState = NEXT_VAR;
+        symbolTable.set(String(token.value));
+        token = nextToken();
+        indent = '';
+        break;
+      case Print:
+        token = nextToken();
+        expression();
+        tokenAppend(`\n\t${stack.pop()}`);
+        break;
+      case VarName:
+        if (parserState !== NEXT_END) {
+          errorMessageAppend('Error: Assignment is possible at \'Begin\'');
+        }
+        token = nextToken();
+        checkTokenType(Assign, 'Error: Token Type must be \'Assign(=)\'');
+        token = nextToken();
+        expression();
+        if (!symbolTable.put(String(startTokenValue), stack.pop())) {
+          errorMessageAppend(`Error: '${startTokenValue}' is not defined Variable`);
+        }
+        break;
+      case TypeInt:
+      case TypeFloat:
+        if (parserState !== NEXT_BEGIN) {
+          errorMessageAppend('Error: Definition is possible at \'Var\'');
+        }
+        defineVariable(startTokenType);
+        break;
+    }
+    if (token.type !== Semicolon) {
+      errorMessageAppend('Error: Last token must be \'Semicolon(;)\'');
+    }
+    token = nextToken();
+  } while (token.type !== Empty);
+  lineAppend(indent);
 };
 
 export const checkState = (): boolean => {

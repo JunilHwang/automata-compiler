@@ -23,6 +23,7 @@ export const TypeInt: number = counter++;
 export const TypeFloat: number = counter++;
 export const Empty: number = counter++;
 export const Comma: number = counter++;
+export const Semicolon: number = counter++;
 export const printKey = 'print';
 export const programKey = 'Program';
 export const varKey = 'Var';
@@ -45,6 +46,7 @@ export const opTable: any = {
   'int': TypeInt,
   'float': TypeFloat,
   ',': Comma,
+  ';': Semicolon,
 };
 export const symbolTable = new class {
   private symbols: any = {};

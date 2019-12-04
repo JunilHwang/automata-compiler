@@ -55,13 +55,7 @@ export default class Interpreter extends Vue {
   private parsing() {
     const { code } = this;
     codeContainer.setCode(code);
-    if (!checkState()) {
-      const tokens = code.split(';').filter((v: string) => v.trim().length);
-      tokens.forEach((token: string) => {
-        codeContainer.setCode(token);
-        statement();
-      });
-    }
+    checkState() || statement();
   }
 }
 </script>
