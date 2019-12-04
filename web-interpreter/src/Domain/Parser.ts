@@ -6,7 +6,7 @@ import {
   Plus, Minus, Multi, Divi, Power,
   Print,
   symbolTable,
-  varKey, endKey, beginKey, Program, TypeInt, TypeFloat, Empty, Var, Comma, Semicolon,
+  varKey, endKey, beginKey, Program, TypeInt, TypeFloat, Empty, Comma, Semicolon,
 } from './TokenDefined';
 import { nextToken } from './Scanner';
 import { eventBus } from '../Helper';
