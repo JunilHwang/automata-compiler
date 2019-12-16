@@ -3,7 +3,7 @@ import {
   printKey, programKey, TypeInt, TypeFloat,
 } from './TokenDefined';
 import { codeContainer } from './CodeContainer';
-import { isNumChar, isNumStr, isVar } from '@/Helper';
+import { isNumChar, isVar } from '@/Helper';
 
 export const nextToken = (): Token => {
   const code = codeContainer.getCode();
@@ -25,7 +25,7 @@ export const nextToken = (): Token => {
       token = { type: opTable[programKey] };
       break;
     case isNumChar(first):
-      while (isNumStr(code.substr(0, i + 1)) && i < last) { i++; }
+      while (isNumChar(code.substr(0, i + 1)) && i < last) { i++; }
       token = { type: IntNum, value: +code.substr(0, i) };
       break;
     case code.indexOf('int') === 0:
