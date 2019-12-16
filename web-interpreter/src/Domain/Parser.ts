@@ -6,7 +6,8 @@ import {
   Plus, Minus, Multi, Divi, Power,
   Print,
   symbolTable,
-  varKey, endKey, beginKey, Program, TypeInt, TypeFloat, Empty, Comma, Semicolon,
+  varKey, endKey, beginKey, Program, TypeInt, TypeFloat,
+  Empty, Comma, Semicolon, Comment,
 } from './TokenDefined';
 import { nextToken } from './Scanner';
 import { eventBus } from '../Helper';
@@ -60,6 +61,9 @@ const factor = () => {
   switch (type) {
     case VarName:
       const symbolValue = symbolTable.get(String(value));
+      if (symbolValue === undefined) {
+        errorMessageAppend(`Error: '${value}' is not defined`);
+      }
       if (symbolValue === null) {
         errorMessageAppend(`Error: '${value}' is not assign`);
       }
@@ -149,7 +153,8 @@ export const statement = (): void => {
         defineVariable(startTokenType);
         break;
     }
-    if (token.type !== Semicolon) {
+    console.log(token.type);
+    if ([Semicolon, Comment].indexOf(token.type) === -1) {
       errorMessageAppend('Error: Last token must be \'Semicolon(;)\'');
     }
     token = nextToken();
@@ -176,7 +181,7 @@ const errorMessageAppend = (message: string) => {
   eventBus.$emit('tokenError', message);
   throw new Error(message);
 };
-const tokenAppend = (message: string) => eventBus.$emit('tokenAppend', message);
+
 const lineAppend = (indent: string = '') => eventBus.$emit('lineAppend', indent);
 const outputAppend = (output: string = '') => eventBus.$emit('outputAppend', output);
 

@@ -14,8 +14,8 @@ a{text-decoration:none;color:inherit;}
   &__container{display:flex;align-items:flex-start;font-size:19px;line-height:30px;position:relative;
     &::before,
     &::after{display:block;position:absolute;top:0;font-size:13px;z-index:10;}
-    &::before{content:"Input";right:410px;color:#ddd;}
-    &::after{content:"Output";right:10px;color:#ddd;}
+    &::before{content:"Input";right:430px;color:#ddd;}
+    &::after{content:"Output";right:30px;color:#ddd;}
     >div{height:380px;padding:10px;overflow:auto;color:#fff;position:relative;}
   }
   &__stack{background:#222;width:580px;}
