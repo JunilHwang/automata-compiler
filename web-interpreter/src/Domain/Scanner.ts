@@ -14,7 +14,7 @@ export const nextToken = (): Token => {
   switch (true) {
     case code.indexOf(commentKey) === 0:    // 주석 체크
       i = last;
-      token = { type: opTable[commentKey] }
+      token = { type: opTable[commentKey] };
       break;
     case opTable[first] !== undefined:      // 단일 글자 token 체크
       i = 1;

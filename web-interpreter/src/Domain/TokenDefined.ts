@@ -70,7 +70,6 @@ export const symbolTable = new class {
   // symbol에서 value를 가져옴
   public get(key: string) {
     const k = this.symbols[key];
-    console.log(k);
     return k === undefined ? undefined : k.value;
   }
   // symbol의 내용을 수정함. 즉, assign 할 때 사용

@@ -69,9 +69,8 @@ export default class Interpreter extends Vue {
     });
   }
   private parsing() {
-    const { code } = this;
-    codeContainer.setCode(code);
-    checkState() || statement();
+    codeContainer.setCode(this.code);
+    checkState();
   }
 }
 </script>
